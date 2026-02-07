@@ -110,11 +110,14 @@ def main():
     
     print(f"{primary_name}: {format_distance(primary_distance)}, {format_time(primary_time)} (Delay: {format_time(primary_delay)})")
 
-    # Check logic: Delay > 5 minutes (300 seconds)
+    # Build Google Maps link
+    maps_link = f"https://www.google.com/maps/dir/{CONFIG.START_COORD}/{CONFIG.DESTINATION_COORD}"
+    
+    # Build message header (always included)
+    header = f"🚗 {CONFIG.ROUTE_NAME}\n📍 {CONFIG.START_NAME} → {CONFIG.DESTINATION_NAME}\n"
+    
+    # Check if there's significant delay (> 5 minutes)
     if primary_delay > 300:
-        # Build message with route header
-        header = f"🚗 {CONFIG.ROUTE_NAME}\n📍 {CONFIG.START_NAME} → {CONFIG.DESTINATION_NAME}\n"
-        
         message = header + f"\n⚠️ Traffic Alert!\n\n"
         message += f"🛣️ {primary_name}\n"
         message += f"📏 {format_distance(primary_distance)} | ⏱️ {format_time(primary_time)} | 🚦 +{format_time(primary_delay)} delay"
@@ -137,10 +140,16 @@ def main():
                  message += f"\n\n📌 {primary_name} is still fastest despite delay."
         else:
              message += "\n\n📌 No alternative route available."
-             
-        send_telegram_message(message)
     else:
-        print("Traffic is normal. No alert sent.")
+        # Normal traffic - reassurance message
+        message = header + f"\n✅ Traffic is clear!\n\n"
+        message += f"🛣️ {primary_name}\n"
+        message += f"📏 {format_distance(primary_distance)} | ⏱️ {format_time(primary_time)}"
+    
+    # Add Google Maps link
+    message += f"\n\n🗺️ [Open in Google Maps]({maps_link})"
+    
+    send_telegram_message(message)
 
 if __name__ == "__main__":
     main()
