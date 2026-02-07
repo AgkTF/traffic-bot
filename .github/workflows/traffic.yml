@@ -29,4 +29,6 @@ jobs:
           TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           MY_CHAT_ID: ${{ secrets.MY_CHAT_ID }}
+          START_COORD: ${{ secrets.START_COORD }}
+          DESTINATION_COORD: ${{ secrets.DESTINATION_COORD }}
         run: python main.py
