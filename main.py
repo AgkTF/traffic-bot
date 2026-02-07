@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class CONFIG:
-    # Coordinates: "latitude,longitude"
+    # Coordinates loaded from environment variables
     START_COORD = os.getenv("START_COORD")
     DESTINATION_COORD = os.getenv("DESTINATION_COORD")
     
