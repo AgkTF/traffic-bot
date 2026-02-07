@@ -21,6 +21,8 @@ The bot requires the following environment variables in `.env`:
 - `TOMTOM_API_KEY`: From TomTom Developer Dashboard.
 - `TELEGRAM_TOKEN`: From BotFather.
 - `MY_CHAT_ID`: Your personal Telegram Chat ID.
+- `START_COORD`: Latitude and longitude of the starting point (e.g., `"34.05,-118.24"`).
+- `DESTINATION_COORD`: Latitude and longitude of the destination (e.g., `"34.00,-118.30"`).
 
 ## 3. Running Locally
 
@@ -32,23 +34,25 @@ To run the bot locally, use the helper script:
 
 This script automatically activates the virtual environment (`.venv`) and runs `main.py`.
 
-## 4. Verification Results
+## 4. Features & Verification
 
-We verified the following:
+We have implemented and verified the following:
 
-- **API Connection**: The bot successfully connects to TomTom API with a 10-second timeout for reliability.
-- **Route Naming**: The bot extracts street names from TomTom's guidance instructions to provide meaningful route descriptions (e.g., "Primary Route via El Nasr Street, El Wahat Road").
-- **Distance Display**: Route distances are displayed in kilometers with one decimal place (e.g., "8.0 km, 13 min").
-- **Delay Calculation**: The bot calculates delay using `trafficDelayInSeconds` from the API.
-- **Alert Logic**:
-  - If `trafficDelayInSeconds > 300` (5 minutes), an alert is sent.
-  - If available, it suggests an alternative route with descriptive street names and distances.
-  - Recommendations include time savings when alternative routes are faster.
-- **Telegram Notification**: Successfully tested with real traffic data, including distance information for all routes.
+- **Enhanced Messaging**:
+  - **Always-Send Logic**: The bot sends a message for every run—`✅ Traffic is clear!` for normal conditions and `⚠️ Traffic Alert!` when delays exceed 5 minutes.
+  - **Rich Formatting**: Uses custom names (e.g., "Daily Commute") and emojis (🚗, 📍, 🛣️, 📏, ⏱️, 🚦) for a quick overview.
+  - **Google Maps Integration**: Every message includes a 🗺️ **[Open in Google Maps]** link for immediate navigation.
+- **Intelligent Routing**:
+  - **Route Naming**: Extracts street names from TomTom guidance (e.g., "via Ring Road") to identify routes accurately.
+  - **Distance & Time**: Shows distance in kilometers and total travel time.
+  - **Alternative Routes**: Automatically checks for faster alternatives during delays and provides recommendations.
+- **Reliability**:
+  - **Security**: Sensitive coordinates and API keys are stored in environment variables and excluded from Git history.
+  - **Performance**: 10-second request timeout to prevent hanging.
 
 ## 5. Deployment
 
 The bot is configured to run automatically on GitHub Actions:
 
 - **Schedule**: Sunday to Thursday at 12:25 UTC.
-- **Secrets**: Make sure to add `TOMTOM_API_KEY`, `TELEGRAM_TOKEN`, and `MY_CHAT_ID` to GitHub Repository Secrets.
+- **Secrets**: Add `TOMTOM_API_KEY`, `TELEGRAM_TOKEN`, `MY_CHAT_ID`, `START_COORD`, and `DESTINATION_COORD` to your GitHub Repository Secrets.
