@@ -36,12 +36,14 @@ This script automatically activates the virtual environment (`.venv`) and runs `
 
 We verified the following:
 
-- **API Connection**: The bot successfully connects to TomTom API.
+- **API Connection**: The bot successfully connects to TomTom API with a 10-second timeout for reliability.
+- **Route Naming**: The bot extracts street names from TomTom's guidance instructions to provide meaningful route descriptions (e.g., "Primary Route via El Nasr Street, El Wahat Road").
 - **Delay Calculation**: The bot calculates delay using `trafficDelayInSeconds` from the API.
 - **Alert Logic**:
   - If `trafficDelayInSeconds > 300` (5 minutes), an alert is sent.
-  - If proper, it suggests an alternative route.
-- **Telegram Notification**: Verified with `curl` command.
+  - If available, it suggests an alternative route with descriptive street names.
+  - Recommendations include time savings when alternative routes are faster.
+- **Telegram Notification**: Successfully tested with real traffic data.
 
 ## 5. Deployment
 
