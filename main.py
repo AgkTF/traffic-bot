@@ -60,6 +60,10 @@ def format_time(seconds):
     minutes = seconds // 60
     return f"{minutes} min"
 
+def format_distance(meters):
+    kilometers = meters / 1000
+    return f"{kilometers:.1f} km"
+
 def get_route_name(route):
     # Try to find the major road from guidance instructions
     guidance = route.get("guidance", {})
@@ -96,22 +100,24 @@ def main():
     primary_summary = primary_route["summary"]
     primary_time = primary_summary["travelTimeInSeconds"]
     primary_delay = primary_summary.get("trafficDelayInSeconds", 0)
+    primary_distance = primary_summary["lengthInMeters"]
     primary_name = "Primary Route" + get_route_name(primary_route)
     
-    print(f"{primary_name}: {format_time(primary_time)} (Delay: {format_time(primary_delay)})")
+    print(f"{primary_name}: {format_distance(primary_distance)}, {format_time(primary_time)} (Delay: {format_time(primary_delay)})")
 
     # Check logic: Delay > 5 minutes (300 seconds)
     if primary_delay > 300:
-        message = f"⚠️ Traffic Alert!\n\n{primary_name} has a delay of {format_time(primary_delay)}.\nTotal Time: {format_time(primary_time)}."
+        message = f"⚠️ Traffic Alert!\n\n{primary_name}\nDistance: {format_distance(primary_distance)}\nDelay: {format_time(primary_delay)}\nTotal Time: {format_time(primary_time)}"
         
         # Check Alternative Route if available
         if len(routes) > 1:
             alt_route = routes[1]
             alt_summary = alt_route["summary"]
             alt_time = alt_summary["travelTimeInSeconds"]
+            alt_distance = alt_summary["lengthInMeters"]
             alt_name = "Alternative Route" + get_route_name(alt_route)
             
-            message += f"\n\n{alt_name} Time: {format_time(alt_time)}."
+            message += f"\n\n{alt_name}\nDistance: {format_distance(alt_distance)}\nTime: {format_time(alt_time)}"
             
             if alt_time < primary_time:
                 saved_time = primary_time - alt_time
