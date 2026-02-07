@@ -11,6 +11,11 @@ class CONFIG:
     START_COORD = os.getenv("START_COORD")
     DESTINATION_COORD = os.getenv("DESTINATION_COORD")
     
+    # Display names for route and points
+    ROUTE_NAME = "Daily School pickup"
+    START_NAME = "Home"
+    DESTINATION_NAME = "School"
+    
     TOMTOM_API_KEY = os.getenv("TOMTOM_API_KEY")
     TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
     MY_CHAT_ID = os.getenv("MY_CHAT_ID")
@@ -107,7 +112,12 @@ def main():
 
     # Check logic: Delay > 5 minutes (300 seconds)
     if primary_delay > 300:
-        message = f"⚠️ Traffic Alert!\n\n{primary_name}\nDistance: {format_distance(primary_distance)}\nDelay: {format_time(primary_delay)}\nTotal Time: {format_time(primary_time)}"
+        # Build message with route header
+        header = f"🚗 {CONFIG.ROUTE_NAME}\n📍 {CONFIG.START_NAME} → {CONFIG.DESTINATION_NAME}\n"
+        
+        message = header + f"\n⚠️ Traffic Alert!\n\n"
+        message += f"🛣️ {primary_name}\n"
+        message += f"📏 {format_distance(primary_distance)} | ⏱️ {format_time(primary_time)} | 🚦 +{format_time(primary_delay)} delay"
         
         # Check Alternative Route if available
         if len(routes) > 1:
@@ -115,17 +125,18 @@ def main():
             alt_summary = alt_route["summary"]
             alt_time = alt_summary["travelTimeInSeconds"]
             alt_distance = alt_summary["lengthInMeters"]
-            alt_name = "Alternative Route" + get_route_name(alt_route)
+            alt_name = "Alternative" + get_route_name(alt_route)
             
-            message += f"\n\n{alt_name}\nDistance: {format_distance(alt_distance)}\nTime: {format_time(alt_time)}"
+            message += f"\n\n🛣️ {alt_name}\n"
+            message += f"📏 {format_distance(alt_distance)} | ⏱️ {format_time(alt_time)}"
             
             if alt_time < primary_time:
                 saved_time = primary_time - alt_time
-                message += f"\n\n✅ RECOMMENDATION: Take {alt_name}! It is faster by {format_time(saved_time)}."
+                message += f"\n\n✅ Take {alt_name}! Saves {format_time(saved_time)}."
             else:
-                 message += f"\n\n{primary_name} is still the fastest despite the delay."
+                 message += f"\n\n📌 {primary_name} is still fastest despite delay."
         else:
-             message += "\n\nNo alternative route available."
+             message += "\n\n📌 No alternative route available."
              
         send_telegram_message(message)
     else:
